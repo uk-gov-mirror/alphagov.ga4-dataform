@@ -6,6 +6,7 @@ config {
 }
 
 SELECT
+    event_key,
     event_date AS event_date,
     user_pseudo_id,
     event_name,
