@@ -1,0 +1,45 @@
+config {
+  type: "test",
+  dataset: "staging_page_summaries"
+}
+
+-- Tests that rows with given status codes are filtered appropriately
+input "ga4_augmenting" {
+  -- allowed status code - should see in aggregation
+  SELECT
+    DATE("2026-01-01") AS event_date,
+    123 AS unique_session_ID,
+    "/test/page" cleaned_page_location,
+    TIMESTAMP("2026-01-01T06:05:00Z") AS event_timestamp,
+    "page_view" AS event_name,
+    1 AS entrances,
+    200 AS status_code,
+    CAST(NULL AS STRING) AS ui_text,
+    CAST(NULL AS STRING) AS category
+  UNION ALL
+
+  -- invalid status code - chould be excluded from aggregation
+  SELECT
+    DATE("2026-01-01") AS event_date,
+    234 AS unique_session_ID,
+    "/test/page" cleaned_page_location,
+    TIMESTAMP("2026-01-01T07:05:00Z") AS event_timestamp,
+    "page_view" AS event_name,
+    1 AS entrances,
+    500 AS status_code,
+    CAST(NULL AS STRING) AS ui_text,
+    CAST(NULL AS STRING) AS category
+}
+
+SELECT
+    DATE("2026-01-01") AS event_date,
+    "/test/page" AS cleaned_page_location,
+    1 AS pageviews,
+    1 AS unique_pageviews,
+    1 AS sessions,
+    1 AS entrances,
+    1 AS exits,
+    0 AS searches,
+    0 AS useful_yes,
+    0 AS useful_no,
+    0 AS mobile_sessions
